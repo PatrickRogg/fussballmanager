@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head th:insert="fragments/header :: head"></head>
+<head>
+	<link rel="stylesheet" href="/css/benachrichtigungen.css" />
+</head>
+<body>
+	<div th:insert="fragments/header :: header"></div>
+	<div class="container-fluid h-100">
+		<div class="row h-100">
+			<div class="" th:insert="fragments/sidebar :: sidebar"></div>
+			<div class="main row h-100">
+				<div class="pl-3 pt-3 pb-2 w-100 border-bottom">
+					<h1 class="">Benachrichtigungen</h1>
+				</div>
+				<div class="col-10 h-100 px-5 border-right">
+					<div class="row py-3 justify-content-center" th:insert="fragments/aktuelleteamanzeige :: aktuelleteamanzeige"></div>
+					<div class="row py-3">
+						<div class="col-8 my-auto">
+							<div class="form-inline">
+								<strong><label for="benachrichtigung-auswaehlen text-left">Filter:</label></strong>
+								<form class="pl-3" th:action="@{/benachrichtigungen/}+${seite}+'/filter'" th:object="${benachrichtigungsFilterHelper}" method="post">
+									<select class="form-control form-control-sm" th:field="*{benachrichtigungsTyp}" id="benachrichtigung-auswaehlen" onChange="this.form.submit()">
+										<option th:value="${null}">Alle</option>
+										<option 
+											th:each="bf : ${alleBenachrichtigungsFilter}"
+											th:value="${bf}"
+											th:text="${bf.bezeichnung}"
+										></option>
+									</select>
+								</form>
+							</div>
+						</div>
+						<div class="col-4 my-auto">
+							<nav aria-label="Page navigation">
+								<ul class="pagination h-100 ">
+									<li class="ml-auto my-auto pr-3">
+										<span th:text="${aktuelleSeite* 10-9}+'-'+${aktuelleSeite*10}+' von '+${alleBenachrichtigungenDesAktuellenUsers.size()}"></span>
+									</li>
+									<li class="page-item pr-1 my-auto">
+										<a class="page-link" th:unless="${aktuelleSeite < 2}" 
+											th:href="@{/benachrichtigungen/}+${aktuelleSeite-1}"><i class="fa fa-angle-left pagination-left"></i></a>
+									</li>
+									<li class="page-item my-auto">
+										<a class="page-link" th:unless="(${aktuelleSeite} > 2)  or (${alleBenachrichtigungenDesAktuellenUsers.size()} < 10)"
+											th:href="@{/benachrichtigungen/}+${aktuelleSeite+1}"><i class="fa fa-angle-right  pagination-right"></i></a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<div class="row h-100">
+						<div class="col">
+							<div class="card" th:each="benachrichtigung, stat : ${alleBenachrichtigungenDesAktuellenUsersDerAktuellenSeite}">
+								<form>
+									<input type="hidden" th:id="'benachrichtigungen-gelesen-form-'+${benachrichtigung.id}" 
+										th:value="'/benachrichtigungen/'+${aktuelleSeite}+'/'+${benachrichtigung.id}+'/gelesen'">
+									<input type="hidden" id="aktuelleSeite" th:value="${aktuelleSeite}">
+								</form>
+								<div th:unless="${benachrichtigung.gelesen}">
+									<div class="card-header bg-danger" th:id="'card-header-'+${benachrichtigung.id}" onclick="oeffneBenachrichtigung(this.id, event)" >
+										<div class="row">
+											<div class="col-1 border-right">
+												<strong><span th:text="'#'+${(stat.index+1) + (aktuelleSeite*10-10)}"></span></strong>
+											</div>
+											<div class="col-4">
+												<div>
+													<strong><span>Von:</span></strong>
+													<span class="pr-4" th:text="${benachrichtigung.absender.name}+' (Liga: '+${benachrichtigung.absender.liga.ligaNameTyp.name}+')'"></span>
+												</div>
+												<div>
+													<strong><span>An:</span></strong>
+													<span th:text="${benachrichtigung.empfaenger.name}+' (Liga: '+${benachrichtigung.empfaenger.liga.ligaNameTyp.name}+')'"></span>
+												</div>
+											</div>
+											<div class="col-3 my-auto">
+												<strong><span th:text="'Betreff: '+${benachrichtigung.benachrichtungsTyp.bezeichnung}"></span></strong>
+											</div>
+											<div class="col-3 my-auto text-right">
+												<div>
+													<span th:text="${benachrichtigung.spieltag.spieltagNummer}+'. Spieltag'"></span>
+												</div>
+												<div>
+													<span th:text="'Uhrzeit: '+${benachrichtigung.uhrzeit}"></span>
+												</div>
+											</div>
+											<div class="col-1 my-auto text-right">
+												<form th:action="@{/benachrichtigungen/}+${aktuelleSeite}+'/'+${benachrichtigung.id}+'/loeschen'" 
+													th:id="'benachrichtigung-loeschen-form-'+${benachrichtigung.id}" method="post">
+													<a th:id="'benachrichtigung-loeschen-'+${benachrichtigung.id}" onclick="loescheBenachrichtigung(this.id)">
+														<i class="fas fa-trash-alt"></i>
+													</a>
+												</form>
+											</div>
+										</div>
+									</div>
+									<div class="card-body collapse" th:id="'card-body-'+${benachrichtigung.id}">
+										<div class="row">
+											<div class="col">
+												<p th:text="${benachrichtigung.benachrichtigungsText}"></p>
+											</div>
+										</div>
+										<div class="row" th:unless="${benachrichtigung.geantwortet}">
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypAnnehmen or 
+												benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/annehmen'">
+													<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Annehmen</button>
+												</form>
+											</div>
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypAnnehmen or
+												benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/ablehnen'">
+													<div class="col">
+														<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Ablehnen</button>
+													</div>
+												</form>
+											</div>
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/zuwenig'">
+													<div class="col">
+														<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Zu Wenig</button>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div th:if="${benachrichtigung.gelesen}">
+									<div class="card-header bg-success" th:id="'card-header-'+${benachrichtigung.id}" onclick="oeffneBenachrichtigung(this.id, event)">
+										<div class="row">
+											<div class="col-1 border-right">
+												<strong><span th:text="'#'+${(stat.index+1) + (aktuelleSeite*10-10)}"></span></strong>
+											</div>
+											<div class="col-4">
+												<div>
+													<strong><span>Von:</span></strong>
+													<span class="pr-4" th:text="${benachrichtigung.absender.name}+' (Liga: '+${benachrichtigung.absender.liga.ligaNameTyp.name}+')'"></span>
+												</div>
+												<div>
+													<strong><span>An:</span></strong>
+													<span th:text="${benachrichtigung.empfaenger.name}+' (Liga: '+${benachrichtigung.empfaenger.liga.ligaNameTyp.name}+')'"></span>
+												</div>
+											</div>
+											<div class="col-3 my-auto">
+												<strong><span th:text="'Betreff: '+${benachrichtigung.benachrichtungsTyp.bezeichnung}"></span></strong>
+											</div>
+											<div class="col-3 my-auto text-right">
+												<div>
+													<span th:text="${benachrichtigung.spieltag.spieltagNummer}+'. Spieltag'"></span>
+												</div>
+												<div>
+													<span th:text="'Uhrzeit: '+${benachrichtigung.uhrzeit}"></span>
+												</div>
+											</div>
+											<div class="col-1 my-auto text-right">
+												<form th:action="@{/benachrichtigungen/}+${aktuelleSeite}+'/'+${benachrichtigung.id}+'/loeschen'" 
+													th:id="'benachrichtigung-loeschen-form-'+${benachrichtigung.id}" method="post">
+													<a th:id="'benachrichtigung-loeschen-'+${benachrichtigung.id}" onclick="loescheBenachrichtigung(this.id)">
+														<i class="fas fa-trash-alt"></i>
+													</a>
+												</form>
+											</div>
+										</div>
+									</div>
+									<div class="card-body collapse" th:id="'card-body-'+${benachrichtigung.id}">
+										<div class="row">
+											<div class="col">
+												<p th:text="${benachrichtigung.benachrichtigungsText}"></p>
+											</div>
+										</div>
+										<div class="row" th:unless="${benachrichtigung.geantwortet}">
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypAnnehmen or 
+												benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/annehmen'">
+													<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Annehmen</button>
+												</form>
+											</div>
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypAnnehmen or
+												benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/ablehnen'">
+													<div class="col">
+														<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Ablehnen</button>
+													</div>
+												</form>
+											</div>
+											<div class="col-4 text-center" th:if="${benachrichtigung.antwortTyp == antwortTypZuWenig}">
+												<form method="POST" th:action="@{/benachrichtigungen/}+${benachrichtigung.id}+'/'+${aktuelleSeite}+'/zuwenig'">
+													<div class="col">
+														<button type="submit" name="submit" value="value"class="nachrichten-button btn btn-link">Zu Wenig</button>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-2"></div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="fragments/header :: scripts"></th:block>
+	<script>
+		function loescheBenachrichtigung(id) {
+			var bereinigteId = id.replace("benachrichtigung-loeschen-", "");
+			document.getElementById("benachrichtigung-loeschen-form-"+bereinigteId).submit();
+		}
+		function oeffneBenachrichtigung(id) {
+			var bereinigteId = id.replace("card-header-", "");
+			var zielId = "card-body-"+bereinigteId
+			if(document.getElementById(zielId).className == "card-body") {
+				document.getElementById(zielId).className = "card-body collapse";
+			} else {
+				document.getElementById(zielId).className = "card-body";
+				if(document.getElementById(id).className == "card-header bg-danger") {
+					var gelesenFormId = "benachrichtigungen-gelesen-form-"+bereinigteId;
+					document.getElementById(id).className= "card-header bg-success"
+					submitGelesenForm(gelesenFormId)
+					//document.getElementById("benachrichtigungen-gelesen-form-"+bereinigteId).submit();
+				}
+				
+			}
+		}
+		
+		function submitGelesenForm(id) {
+			console.log(id);
+			var postLink = document.getElementById(id).value;
+			console.log(postLink);
+		   	var http = new XMLHttpRequest();
+		   	http.open("POST", postLink, true);
+		    http.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		    var params = "search=" + document.getElementById("aktuelleSeite").value; // probably use document.getElementById(...).value
+		    http.send(params);
+		}
+	</script>
+</body>
+</html>

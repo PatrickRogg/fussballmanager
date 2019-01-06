@@ -1,0 +1,60 @@
+<html>
+<head>
+	<title>Fussballmanger-Game</title>
+	<meta charset="utf-8"/>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" href="/css/header.css" />
+	<link rel="stylesheet" href="/css/sidebar.css" />
+</head>
+<body>
+	<div th:fragment="header" id="header1">
+		<nav class="navbar navbar-dark navbar-expand fixed-top bg-secondary flex-md-nowrap p-0 shadow">
+ 				<a class="navbar-brand col-sm-3" href="/">Fussballmanager-Game</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="nav navbar-nav w-100">
+					<li class="nav-item mx-auto">
+						<a class="nav-link" href="/chat">Chat</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a class="nav-link" th:href="@{/team/}+${aktuellesTeam.id}">Kader</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a class="nav-link" th:href="@{/}+${aktuellesTeam.land.getLandNameTyp().getName()}+'/'+
+								${aktuellesTeam.liga.ligaNameTyp.getName()}+'/'+${aktuelleSaison.saisonNummer}+'/'+${aktuellerSpieltag.spieltagNummer}">Tabelle</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a class="nav-link" href="/liveticker" onClick="window.open('/liveticker','liveticker','resizable,height=600,width=900'); return false;">
+						Liveticker</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a class="nav-link" href="/protage">Protage</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a class="nav-link" href="#">Forum</a>
+					</li>
+					<li class="nav-item mx-auto">
+						<a href="/einstellungen" class="nav-link">Einstellungen</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav ml-auto w-10 justify-content-end">
+					
+					<li class="navbar-text pr-3">
+						<a href="/logout"><button type="button" class="btn btn-sm btn-danger" >Logout</button></a>
+					</li>
+				</ul>
+
+			</div>
+		</nav>
+	</div>
+	<th:block th:fragment="scripts">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,20 @@
+.hovered {
+	border: 3px solid red;
+	border-style: dashed;
+}
+
+.dragged {
+	border: 3px solid red;
+}
+
+.invisible {
+	display: none;
+}
+
+.formation-einsatz-ausrichtung-col {
+	padding: 20px;
+}
+
+.aufstellungs-reihe {
+	height: 90px;
+}

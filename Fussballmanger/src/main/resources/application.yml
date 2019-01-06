@@ -1,0 +1,18 @@
+server:
+  port: 8000
+spring:
+  h2:
+    console:
+      enabled: true
+      settings: 
+        web-allow-others: true  	
+  jpa: 
+    hibernate: 
+      generate_statistics: false
+      format_sql: false
+    show-sql: false
+
+fussballmanager:
+  admin:
+    login: admin
+    password: blub

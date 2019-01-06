@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head th:insert="fragments/header :: head"></head>
+<head>
+	<link rel="stylesheet" href="/css/spieldetails.css" />
+</head>
+<body>
+	<div th:insert="fragments/header :: header"></div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="" th:insert="fragments/sidebar :: sidebar"></div>
+			<div class="col-10 main-content">
+				<div class="row">
+					<div class="col-11">
+						<div class="row" >
+							<div class="col-5"></div>
+							<div class="col-3" th:insert="fragments/aktuelleteamanzeige :: aktuelleteamanzeige"></div>
+						</div>
+					</div>
+					<div class="col-11 main">
+						<hr>
+						<h4>Spiel</h4>
+						<div class="alert alert-success" th:if="${successMessage}">
+			  				<strong><p th:utext="${successMessage}"></p></strong>
+						</div>
+						<div class="alert alert-danger" th:if="${errorMessage}">
+				  			<strong><p th:utext="${errorMessage}"></p></strong>
+						</div>
+						<div>
+							<table class="table table-hover table-bordered">
+								<thead>
+									<tr class="table-active">
+										<th scope="col">Spieltag</th>
+										<th scope="col">Spielbeginn</th>
+										<th scope="col">Heimmannschaft</th>
+										<th scope="col">Ergebnis</th>
+										<th scope="col">Gastmannschaft</th>
+									</tr>
+								</thead>
+								<tr class="">
+									<td th:text="${spielEintrag.spieltag}" />
+									<td th:text="${spielEintrag.spielbeginnToString()}" />
+									<td>
+										<a th:href="@{/team/}+${spielEintrag.heimmannschaft.id}" th:text="${spielEintrag.heimmannschaftUndStaerkeToString()}"></a>
+									</td>
+									<td class="ergebnisInTabelle">
+										<a class="" th:href="@{/spiel/}+${spielEintrag.id}">
+											<span th:text="${spielEintrag.spielErgebnisToString()}"></span><br>
+											<span th:text="${spielEintrag.spielErgebnisHalbzeitToString()}"></span>
+										</a>
+									</td>
+									<td>
+										<a th:href="@{/team/}+${spielEintrag.gastmannschaft.id}" th:text="${spielEintrag.gastmannschaftUndStaerkeToString()}"></a>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="row">
+							<div class="col-12" th:each="spielEreignisEintrag : ${spielEreignisEintaerge}">
+								<div class="col">
+									<p th:text="${spielEreignisEintrag.spielEreignisEintragToString()}"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="fragments/header :: scripts" />
+</body>
+</html>
