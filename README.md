@@ -18,6 +18,13 @@ Due to missing time this Project is currently not finished and put on hold.
 * Open Eclipse File -> Import -> Existing Maven Project -> Navigate to the folder where you unzipped the zip
 * Select the right project. Choose the Spring Boot Application file (search for @FussballmanagerApplication) Right Click on the file and Run as Java Application
 
+
+## Used Technology
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: Java
+* Frameworks: Spring-Boot with JPA and Hibernate
+
 ## Pictures of the application
 
 1. Dashboard with all teams the user currently own and can manage:
@@ -38,12 +45,6 @@ Due to missing time this Project is currently not finished and put on hold.
 
 
 
-
-## Used Technology
-
-* Frontend: HTML, CSS, JavaScript
-* Backend: Java
-* Frameworks: Spring-Boot with JPA and Hibernate
 
 ## Authors
 * Patrick Rogg
